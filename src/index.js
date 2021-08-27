@@ -1,13 +1,13 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import App from "./App";
+import App from "./components/App";
 import { Provider } from "react-redux";
 import { createStore, applyMiddleware, compose } from "redux";
 import ErrorBoundary from "./ErrorBoundary";
-import { reduxThunk } from "redux-thunk";
+import reduxThunk from "redux-thunk";
 
 const composEnhancer = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
-const store = createStore(null, composEnhancer(applyMiddleware(reduxThunk)));
+const store = createStore(composEnhancer(applyMiddleware(reduxThunk)));
 
 ReactDOM.render(
   <Provider store={store}>
