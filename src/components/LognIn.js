@@ -1,4 +1,6 @@
 import React from "react";
+// import "antd/dist/antd.css";
+
 import {
   Button,
   Checkbox,
@@ -25,19 +27,19 @@ const { Header, Content } = Layout;
 
 class LogIn extends React.Component {
   state = {
-    username: "",
+    email: "",
     password: "",
     remember: false,
     errors: {
-      username: "",
+      email: "",
       password: "",
     },
   };
 
   componentDidMount() {
-    const { username, password, remember } = this.state;
+    const { email, password, remember } = this.state;
     this.setState({
-      username: username,
+      email: email,
       password: password,
       remember: remember,
     });
@@ -45,20 +47,26 @@ class LogIn extends React.Component {
 
   //on change event
   handleOnChange = (event) => {
-    console.log("clicked", event.target);
+    // console.log("clicked", event.target);
     const { name, value } = event.target;
     const checkbox = event.target.checked;
-    console.log("checkbox", checkbox);
+    // console.log("checkbox", checkbox);
     const isChecked = checkbox ? true : false;
 
     //switch statement for validation
     let { errors } = this.state;
     switch (name) {
-      case "username":
-        errors.username = !value.match(
-          /^(?=[a-zA-Z]{5,20}$)(?!.*[_.]{2})[^_.].*[^_.]$/
+      case "email":
+        let lastAtPos = value.lastIndexOf("@");
+        let lastDotPos = value.lastIndexOf(".");
+        errors.email = !(
+          lastAtPos < lastDotPos &&
+          lastAtPos > 0 &&
+          value.indexOf("@@") === -1 &&
+          lastDotPos > 2 &&
+          value.length - lastDotPos > 2
         )
-          ? "*Username must be at least 5 characters long and without special character!"
+          ? "*Email is not valid"
           : "";
         break;
       case "password":
@@ -77,20 +85,20 @@ class LogIn extends React.Component {
   //handle validation
   handleValidation = () => {
     let formIsValid = true;
-    if (
-      this.state.errors.username === "" &&
-      this.state.errors.password === ""
-    ) {
+    if (this.state.errors.email === "" && this.state.errors.password === "") {
+      const { email, password } = this.state;
+      if (email === "" || password === "") {
+        return false;
+      }
       return formIsValid;
-    } else {
-      return false;
     }
+    return false;
   };
   //handle login
   handleLogin = (e) => {
     e.preventDefault();
     const { remember } = this.state;
-    console.log("state", this.state);
+    // console.log("state", this.state);
     if (remember && this.handleValidation(this.state.errors)) {
       const success = () => {
         message.success("You are Logged In");
@@ -104,7 +112,7 @@ class LogIn extends React.Component {
       };
       success();
       this.redirectLoginHome();
-    } else if (!this.handleValidation()) {
+    } else if (!this.handleValidation(this.state.errors)) {
       const error = () => {
         message.error("Please input valid credentials!");
       };
@@ -158,22 +166,22 @@ class LogIn extends React.Component {
             <h1 style={{ color: "purple" }}>LogIn</h1>
             <Form layout="vertical" style={{ width: "400px" }}>
               <Form.Item
-                label="Username"
-                name="username"
+                label="Email"
+                // name="username"
                 rules={[{ required: true }]}
               >
                 <Input
                   prefix={<UserOutlined className="site-form-item-icon" />}
                   value={username}
                   onChange={this.handleOnChange}
-                  name="username"
-                  placeholder="Username"
+                  name="email"
+                  placeholder="Email"
                 />
-                <h4 style={{ color: "red" }}>{errors["username"]}</h4>
+                <h4 style={{ color: "red" }}>{errors["email"]}</h4>
               </Form.Item>
               <Form.Item
                 label="Password"
-                name="password"
+                // name="password"
                 rules={[{ required: true }]}
               >
                 <Input.Password
@@ -192,7 +200,6 @@ class LogIn extends React.Component {
 
               <Form.Item name="login">
                 <Button
-                  disabled={username && password !== "" ? "" : true}
                   type="primary"
                   style={{ width: "100%", marginTop: "5px" }}
                   icon={<LoginOutlined />}

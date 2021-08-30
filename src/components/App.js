@@ -4,6 +4,7 @@ import "antd/dist/antd.css";
 import LogIn from "./LognIn";
 import MainPage from "./MainPage";
 import ProductPage from "./ProductPage";
+import SignUp from "./SignUp";
 
 const App = () => {
   //   const handleSignIn = () => {
@@ -16,6 +17,7 @@ const App = () => {
         <Switch>
           <Route path="/" exact component={MainPage} />
           <Route path="/loginpage" exact component={LogIn} />
+          <Route path="/signuppage" exact component={SignUp} />
           <Route path="/dashboardpage" exact component={ProductPage} />
         </Switch>
       </Router>

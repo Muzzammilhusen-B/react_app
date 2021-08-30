@@ -1,14 +1,7 @@
-.login-form {
-  font-family: "Montserrat", sans-serif;
-  font-size: larger;
-  height: 94vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
+.layout {
 }
 
-.layout {
+.login-form {
   background: -webkit-linear-gradient(
     90deg,
     hsla(332, 53%, 82%, 1) 0%,
@@ -16,4 +9,11 @@
   );
 
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr=#E9B7CE, endColorstr=#D3F3F1, GradientType=1 );
+  font-family: "Montserrat", sans-serif;
+  font-size: larger;
+  height: 94vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
 }

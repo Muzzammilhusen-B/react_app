@@ -1,0 +1,27 @@
+.layout {
+  height: 94vh;
+  background: white;
+  /* background: -webkit-linear-gradient(
+    90deg,
+    hsla(332, 53%, 82%, 1) 0%,
+    hsla(176, 57%, 89%, 1) 100%
+  );
+
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr=#E9B7CE, endColorstr=#D3F3F1, GradientType=1 ); */
+}
+.form-layout {
+  display: flex;
+  height: 93vh;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+.heading {
+  font-size: xx-large;
+  font: bold;
+  color: blue;
+}
+
+.errors {
+  color: red;
+}
