@@ -1,6 +1,5 @@
 import React from "react";
-// import "antd/dist/antd.css";
-
+import "antd/dist/antd.css";
 import {
   Button,
   Checkbox,
@@ -22,6 +21,10 @@ import logo from "./logo.png";
 import "./login.css";
 import { Link } from "react-router-dom";
 import Footerbar from "./Footer";
+import { saveProductsToLocal } from "../localstorage";
+// import axios from "axios";
+import api from "./apis/api";
+// import axios from "axios";
 
 const { Header, Content } = Layout;
 
@@ -43,6 +46,11 @@ class LogIn extends React.Component {
       password: password,
       remember: remember,
     });
+    const dataFetch = async () => {
+      const result = await api.get("/api/users/sign_up");
+      console.log("Signup details on mount", result);
+    };
+    dataFetch();
   }
 
   //on change event
@@ -95,15 +103,25 @@ class LogIn extends React.Component {
     return false;
   };
   //handle login
-  handleLogin = (e) => {
+  handleLogin = async (e) => {
     e.preventDefault();
-    const { remember } = this.state;
+    const { remember, email, password } = this.state;
     // console.log("state", this.state);
+    let result = await api.post("/api/users/sign_in", {
+      method: "POST",
+      data: {
+        user: { email, password, role: "patient" },
+        device_detail: { deveice_type: "web", player_id: "" },
+      },
+    });
+    console.log("Result", result);
+
     if (remember && this.handleValidation(this.state.errors)) {
       const success = () => {
         message.success("You are Logged In");
       };
       success();
+      saveProductsToLocal();
       this.redirectLoginHome();
       localStorage.setItem("logindata", JSON.stringify(this.state));
     } else if (this.handleValidation(this.state.errors)) {
@@ -111,6 +129,7 @@ class LogIn extends React.Component {
         message.success("You are Logged In");
       };
       success();
+      saveProductsToLocal();
       this.redirectLoginHome();
     } else if (!this.handleValidation(this.state.errors)) {
       const error = () => {

@@ -5,12 +5,9 @@ import LogIn from "./LognIn";
 import MainPage from "./MainPage";
 import ProductPage from "./ProductPage";
 import SignUp from "./SignUp";
+import Cart from "./Cart";
 
 const App = () => {
-  //   const handleSignIn = () => {
-  //     const { history } = this.props;
-  //     if (history) history.push("/loginpage");
-  //   };
   return (
     <>
       <Router>
@@ -19,6 +16,7 @@ const App = () => {
           <Route path="/loginpage" exact component={LogIn} />
           <Route path="/signuppage" exact component={SignUp} />
           <Route path="/dashboardpage" exact component={ProductPage} />
+          <Route path="/dashboardpage/cart" exact component={Cart} />
         </Switch>
       </Router>
     </>

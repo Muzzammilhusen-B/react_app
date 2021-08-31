@@ -16,6 +16,7 @@ import { SmileOutlined, LoginOutlined } from "@ant-design/icons";
 import "./signup.css";
 import "antd/dist/antd.css";
 import Footerbar from "./Footer";
+import api from "./apis/api";
 
 const { Header, Content, Sider } = Layout;
 
@@ -133,9 +134,17 @@ class SignUp extends React.Component {
   };
 
   //handle signup
-  handleSignup = (e) => {
+  handleSignup = async (e) => {
+    const { firstname, lastname, email, password, phone } = this.state;
     e.preventDefault();
-
+    let result = await api.post("/api/users/sign_up", {
+      method: "POST",
+      data: {
+        user: { firstname, lastname, email, password, phone, role: "patient" },
+        device_detail: { deveice_type: "web", player_id: "" },
+      },
+    });
+    console.log("Sign up result", result);
     // console.log("state", this.state);
     if (this.handleValidation(this.state.errors)) {
       const success = () => {
