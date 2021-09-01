@@ -10,6 +10,7 @@ import {
   Form,
   Input,
   message,
+  Typography,
 } from "antd";
 import { Link } from "react-router-dom";
 import { SmileOutlined, LoginOutlined } from "@ant-design/icons";
@@ -19,7 +20,7 @@ import Footerbar from "./Footer";
 import api from "./apis/api";
 
 const { Header, Content, Sider } = Layout;
-
+const { Title } = Typography;
 class SignUp extends React.Component {
   state = {
     firstname: "",
@@ -141,7 +142,7 @@ class SignUp extends React.Component {
       method: "POST",
       data: {
         user: { firstname, lastname, email, password, phone, role: "patient" },
-        device_detail: { deveice_type: "web", player_id: "" },
+        device_detail: { device_type: "web", player_id: "" },
       },
     });
     console.log("Sign up result", result);
@@ -205,10 +206,25 @@ class SignUp extends React.Component {
             </Menu.Item> */}
           </Menu>
         </Header>
-        <Layout className="layout">
+        <Layout
+          className="layout"
+          style={{
+            background:
+              "-webkit-linear-gradient(90deg, hsla(332, 53%, 82%, 1) 0%, hsla(176, 57%, 89%, 1) 100%)",
+            filter:
+              "progid:DXImageTransform.Microsoft.gradient( startColorstr=#E9B7CE, endColorstr=#D3F3F1, GradientType=1 )",
+          }}
+        >
           <Sider
+            theme="light"
             // width={400}
-            style={{ marginTop: "60px", background: "rgb(103, 6, 156)" }}
+            style={{
+              marginTop: "60px",
+              background:
+                "-webkit-linear-gradient(90deg, hsla(332, 53%, 82%, 1) 0%, hsla(176, 57%, 89%, 1) 100%)",
+              filter:
+                "progid:DXImageTransform.Microsoft.gradient( startColorstr=#E9B7CE, endColorstr=#D3F3F1, GradientType=1 )",
+            }}
             breakpoint="lg"
             collapsedw="0"
           >
@@ -221,7 +237,7 @@ class SignUp extends React.Component {
           // style={{ marginTop: "60px" }}
           >
             <div className="form-layout">
-              <h1 className="heading">Sign up for Shopping App</h1>
+              <Title>Register</Title>
               <Form layout="vertical" style={{ width: "400px" }}>
                 <Form.Item>
                   <Input
@@ -294,7 +310,7 @@ class SignUp extends React.Component {
                 <h5>
                   *By signing up, you agree to Shop App{" "}
                   <Link to="/signuppage">
-                    <u>Term of Service.</u>
+                    <u>Terms of Service.</u>
                   </Link>
                 </h5>
                 <Button

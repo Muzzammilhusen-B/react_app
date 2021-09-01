@@ -10,6 +10,7 @@ import {
   Menu,
   Tooltip,
   Image,
+  Typography,
 } from "antd";
 import {
   UserOutlined,
@@ -27,7 +28,7 @@ import api from "./apis/api";
 // import axios from "axios";
 
 const { Header, Content } = Layout;
-
+const { Title } = Typography;
 class LogIn extends React.Component {
   state = {
     email: "",
@@ -46,11 +47,6 @@ class LogIn extends React.Component {
       password: password,
       remember: remember,
     });
-    const dataFetch = async () => {
-      const result = await api.get("/api/users/sign_up");
-      console.log("Signup details on mount", result);
-    };
-    dataFetch();
   }
 
   //on change event
@@ -108,10 +104,10 @@ class LogIn extends React.Component {
     const { remember, email, password } = this.state;
     // console.log("state", this.state);
     let result = await api.post("/api/users/sign_in", {
-      method: "POST",
+      // method: "POST",
       data: {
         user: { email, password, role: "patient" },
-        device_detail: { deveice_type: "web", player_id: "" },
+        device_detail: { device_type: "web", player_id: "" },
       },
     });
     console.log("Result", result);
@@ -182,7 +178,7 @@ class LogIn extends React.Component {
         </Header>
         <Content className="layout">
           <div className="login-form">
-            <h1 style={{ color: "purple" }}>LogIn</h1>
+            <Title>LogIn</Title>
             <Form layout="vertical" style={{ width: "400px" }}>
               <Form.Item
                 label="Email"
@@ -228,7 +224,7 @@ class LogIn extends React.Component {
                 </Button>
               </Form.Item>
               <h3>
-                New user?{" "}
+                Don't have an account?{" "}
                 <Link to="/signuppage">
                   Register <UserAddOutlined />
                 </Link>

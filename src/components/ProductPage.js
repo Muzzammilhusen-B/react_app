@@ -1,7 +1,17 @@
 import logo from "./logo.png";
 import React from "react";
-import { Layout, Menu, Tooltip, Image, Table, Button, Badge, Tag } from "antd";
-import { ShoppingCartOutlined } from "@ant-design/icons";
+import {
+  Layout,
+  Menu,
+  Tooltip,
+  Image,
+  Table,
+  Button,
+  Badge,
+  Tag,
+  message,
+} from "antd";
+import { ShoppingCartOutlined, LogoutOutlined } from "@ant-design/icons";
 import { Link } from "react-router-dom";
 import api from "./apis/api";
 import { loadProductsfromLocal } from "../localstorage";
@@ -17,6 +27,7 @@ class ProductPage extends React.Component {
     const data = loadProductsfromLocal();
     this.props.fetchData(data);
   }
+
   //handle response
   handleResponse = async () => {
     const response = await api.post("/users/sign_up.json", {});
@@ -24,7 +35,15 @@ class ProductPage extends React.Component {
   };
 
   //log out=>
-  handleLogout = () => {
+  handleLogout = async () => {
+    const result = await api.delete("/api/users/sign_out", {
+      auth: "My token",
+    });
+    console.log("logout result", result);
+    const success = () => {
+      message.success("Logout successfully..!");
+    };
+    success();
     const { history } = this.props;
     if (history) history.push("/loginpage");
   };
@@ -57,7 +76,7 @@ class ProductPage extends React.Component {
         dataIndex: "Location",
       },
       {
-        title: "Price in $",
+        title: "Price in ($)",
         key: "price",
         dataIndex: "price",
       },
@@ -129,7 +148,11 @@ class ProductPage extends React.Component {
                 Cart{" "}
               </Badge>
             </Menu.Item>
-            <Menu.Item key="1" onClick={this.handleLogout}>
+            <Menu.Item
+              key="1"
+              onClick={this.handleLogout}
+              icon={<LogoutOutlined />}
+            >
               Log out
             </Menu.Item>
           </Menu>

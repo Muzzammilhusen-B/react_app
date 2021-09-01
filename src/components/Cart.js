@@ -1,23 +1,51 @@
 import logo from "./logo.png";
 import React from "react";
-import { Layout, Menu, Tooltip, Image, Badge, Card, Button } from "antd";
+import {
+  Layout,
+  Menu,
+  Tooltip,
+  Image,
+  Badge,
+  Card,
+  Button,
+  message,
+} from "antd";
 import {
   ShoppingCartOutlined,
   CaretDownOutlined,
   CaretUpOutlined,
+  DashboardOutlined,
+  LogoutOutlined,
 } from "@ant-design/icons";
 import { Link } from "react-router-dom";
 import Footerbar from "./Footer";
 import { connect } from "react-redux";
 import { addQty, remove, subQty } from "./actions";
+import api from "./apis/api";
 
 const { Header, Content } = Layout;
 const { Meta } = Card;
 class Cart extends React.Component {
+  async componentDidMount() {
+    const result = await api.get("/api/users/sign_in");
+    console.log("user", result);
+  }
+
   //redirect to dashboard
   redirectToDashboard = () => {
     const { history } = this.props;
     if (history) history.push("/dashboardpage");
+  };
+  //handle log out
+  handleLogout = async () => {
+    const result = await api.delete("/api/users/sign_out");
+    console.log("logout result", result);
+    const success = () => {
+      message.success("Logout successfully..!");
+    };
+    success();
+    const { history } = this.props;
+    if (history) history.push("/loginpage");
   };
   //add quantity
   handleAddQty = (id) => {
@@ -64,7 +92,11 @@ class Cart extends React.Component {
             </Tooltip>
           </div>
           <Menu style={{ float: "right" }} mode="horizontal" theme="light">
-            <Menu.Item key="1" onClick={this.redirectToDashboard}>
+            <Menu.Item
+              key="1"
+              onClick={this.redirectToDashboard}
+              icon={<DashboardOutlined />}
+            >
               Dashboard
             </Menu.Item>
             <Menu.Item
@@ -76,7 +108,11 @@ class Cart extends React.Component {
                 Cart{" "}
               </Badge>
             </Menu.Item>
-            <Menu.Item key="3" onClick={this.handleLogout}>
+            <Menu.Item
+              key="3"
+              onClick={this.handleLogout}
+              icon={<LogoutOutlined />}
+            >
               Log out
             </Menu.Item>
           </Menu>
