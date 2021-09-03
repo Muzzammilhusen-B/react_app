@@ -11,6 +11,7 @@ import {
   Tooltip,
   Image,
   Typography,
+  Spin,
 } from "antd";
 import {
   UserOutlined,
@@ -34,19 +35,21 @@ class LogIn extends React.Component {
     email: "",
     password: "",
     remember: false,
+    spin: false,
     errors: {
       email: "",
       password: "",
     },
   };
 
-  componentDidMount() {
+  async componentDidMount() {
     const { email, password, remember } = this.state;
     this.setState({
       email: email,
       password: password,
       remember: remember,
     });
+    //    // console.log("signup details loginpage", signup);
   }
 
   //on change event
@@ -75,7 +78,7 @@ class LogIn extends React.Component {
         break;
       case "password":
         errors.password = !value.match(
-          "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{6,1000}$"
+          "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{6,1000}$"
         )
           ? "*Password should contain one smallcase, uppercase, symbol & number each and minimum 6 in length"
           : "";
@@ -102,36 +105,65 @@ class LogIn extends React.Component {
   handleLogin = async (e) => {
     e.preventDefault();
     const { remember, email, password } = this.state;
-    // console.log("state", this.state);
-    let result = await api.post("/api/users/sign_in", {
-      // method: "POST",
-      data: {
-        user: { email, password, role: "patient" },
-        device_detail: { device_type: "web", player_id: "" },
-      },
-    });
-    console.log("Result", result);
-
     if (remember && this.handleValidation(this.state.errors)) {
-      const success = () => {
-        message.success("You are Logged In");
-      };
-      success();
-      saveProductsToLocal();
-      this.redirectLoginHome();
-      localStorage.setItem("logindata", JSON.stringify(this.state));
+      this.setState({ spin: true });
+
+      let result = await api.post("/api/users/sign_in", {
+        user: { email, password },
+        role: "patient",
+        device_detail: { device_type: "web", player_id: "" },
+      });
+      console.log("Result", result.data.status);
+
+      if (result.data.status === 200) {
+        saveProductsToLocal();
+        this.redirectLoginHome();
+        const success = () => {
+          message.success(
+            `Welcome ${result.data.data.user.first_name} ${result.data.data.user.last_name}`
+          );
+        };
+        success();
+        localStorage.setItem("logindata", JSON.stringify(this.state));
+        localStorage.setItem(
+          "authToken",
+          JSON.stringify(result.data.data.user.auth_token)
+        );
+      } else {
+        this.setState({ spin: false });
+        const error = () => {
+          message.error(`${result.data.message}`);
+        };
+        error();
+      }
     } else if (this.handleValidation(this.state.errors)) {
-      const success = () => {
-        message.success("You are Logged In");
-      };
-      success();
-      saveProductsToLocal();
-      this.redirectLoginHome();
-    } else if (!this.handleValidation(this.state.errors)) {
-      const error = () => {
-        message.error("Please input valid credentials!");
-      };
-      error();
+      this.setState({ spin: true });
+      let result = await api.post("/api/users/sign_in", {
+        user: { email, password },
+        role: "patient",
+        device_detail: { device_type: "web", player_id: "" },
+      });
+      console.log("Result", result);
+      if (result.data.status === 200) {
+        saveProductsToLocal();
+        this.redirectLoginHome();
+        const success = () => {
+          message.success(
+            `Welcome ${result.data.data.user.first_name} ${result.data.data.user.last_name}`
+          );
+        };
+        success();
+        localStorage.setItem(
+          "authToken",
+          JSON.stringify(result.data.data.user.auth_token)
+        );
+      } else {
+        this.setState({ spin: false });
+        const error = () => {
+          message.error(`${result.data.message}`);
+        };
+        error();
+      }
     }
   };
   //redirect loginhome page(product list component dashboard)
@@ -176,62 +208,64 @@ class LogIn extends React.Component {
             </Menu.Item>
           </Menu>
         </Header>
-        <Content className="layout">
-          <div className="login-form">
-            <Title>LogIn</Title>
-            <Form layout="vertical" style={{ width: "400px" }}>
-              <Form.Item
-                label="Email"
-                // name="username"
-                rules={[{ required: true }]}
-              >
-                <Input
-                  prefix={<UserOutlined className="site-form-item-icon" />}
-                  value={username}
-                  onChange={this.handleOnChange}
-                  name="email"
-                  placeholder="Email"
-                />
-                <h4 style={{ color: "red" }}>{errors["email"]}</h4>
-              </Form.Item>
-              <Form.Item
-                label="Password"
-                // name="password"
-                rules={[{ required: true }]}
-              >
-                <Input.Password
-                  prefix={<LockOutlined className="site-form-item-icon" />}
-                  onChange={this.handleOnChange}
-                  value={password}
-                  name="password"
-                  placeholder="Password"
-                />
-                <h4 style={{ color: "red" }}>{errors["password"]}</h4>
-              </Form.Item>
-
-              <Checkbox onChange={this.handleOnChange} name="remember">
-                Remember Me
-              </Checkbox>
-
-              <Form.Item name="login">
-                <Button
-                  type="primary"
-                  style={{ width: "100%", marginTop: "5px" }}
-                  icon={<LoginOutlined />}
-                  onClick={this.handleLogin}
+        <Spin spinning={this.state.spin}>
+          <Content className="layout">
+            <div className="login-form">
+              <Title>LogIn</Title>
+              <Form layout="vertical" style={{ width: "400px" }}>
+                <Form.Item
+                  label="Email"
+                  // name="username"
+                  rules={[{ required: true }]}
                 >
-                  Log In
-                </Button>
-              </Form.Item>
-              <h3>
-                Don't have an account?{" "}
-                <Link to="/signuppage">
-                  Register <UserAddOutlined />
-                </Link>
-              </h3>
-            </Form>
-          </div>
-        </Content>
+                  <Input
+                    prefix={<UserOutlined className="site-form-item-icon" />}
+                    value={username}
+                    onChange={this.handleOnChange}
+                    name="email"
+                    placeholder="Email"
+                  />
+                  <h4 style={{ color: "red" }}>{errors["email"]}</h4>
+                </Form.Item>
+                <Form.Item
+                  label="Password"
+                  // name="password"
+                  rules={[{ required: true }]}
+                >
+                  <Input.Password
+                    prefix={<LockOutlined className="site-form-item-icon" />}
+                    onChange={this.handleOnChange}
+                    value={password}
+                    name="password"
+                    placeholder="Password"
+                  />
+                  <h4 style={{ color: "red" }}>{errors["password"]}</h4>
+                </Form.Item>
+
+                <Checkbox onChange={this.handleOnChange} name="remember">
+                  Remember Me
+                </Checkbox>
+
+                <Form.Item name="login">
+                  <Button
+                    type="primary"
+                    style={{ width: "100%", marginTop: "5px" }}
+                    icon={<LoginOutlined />}
+                    onClick={this.handleLogin}
+                  >
+                    Log In
+                  </Button>
+                </Form.Item>
+                <h3>
+                  Don't have an account?{" "}
+                  <Link to="/signuppage">
+                    Register <UserAddOutlined />
+                  </Link>
+                </h3>
+              </Form>
+            </div>
+          </Content>
+        </Spin>
         <Footerbar />
       </Layout>
     );

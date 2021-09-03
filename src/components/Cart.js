@@ -38,14 +38,29 @@ class Cart extends React.Component {
   };
   //handle log out
   handleLogout = async () => {
-    const result = await api.delete("/api/users/sign_out");
+    this.setState({ spin: true });
+    const AUTH_TOKEN = JSON.parse(localStorage.getItem("authToken"));
+    console.log("authtoken", AUTH_TOKEN);
+    const result = await api.delete("/api/users/sign_out", {
+      headers: {
+        AUTH_TOKEN: AUTH_TOKEN,
+      },
+    });
     console.log("logout result", result);
-    const success = () => {
-      message.success("Logout successfully..!");
-    };
-    success();
-    const { history } = this.props;
-    if (history) history.push("/loginpage");
+    if (result.data.status === 200) {
+      const success = () => {
+        message.success(`${result.data.message}`);
+      };
+      success();
+      const { history } = this.props;
+      if (history) history.push("/loginpage");
+    } else {
+      this.setState({ spin: false });
+      const error = () => {
+        message.error(`${result.data.message}`);
+      };
+      error();
+    }
   };
   //add quantity
   handleAddQty = (id) => {
