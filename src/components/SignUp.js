@@ -5,7 +5,6 @@ import {
   Tooltip,
   Image,
   Menu,
-  Result,
   Button,
   Form,
   Input,
@@ -13,15 +12,21 @@ import {
   Typography,
   Spin,
 } from "antd";
-import { Link } from "react-router-dom";
-import { SmileOutlined, LoginOutlined } from "@ant-design/icons";
+import {Link} from "react-router-dom";
+import {
+  LoginOutlined,
+  UserOutlined,
+  PhoneOutlined,
+  LockOutlined,
+  MailOutlined,
+} from "@ant-design/icons";
 import "./signup.css";
 import "antd/dist/antd.css";
 import Footerbar from "./Footer";
 import api from "./apis/api";
 
-const { Header, Content, Sider } = Layout;
-const { Title } = Typography;
+const {Header, Content} = Layout;
+const {Title} = Typography;
 class SignUp extends React.Component {
   state = {
     first_name: "",
@@ -44,21 +49,21 @@ class SignUp extends React.Component {
   //onchange
 
   handleOnChange = (event) => {
-    const { name, value } = event.target;
+    const {name, value} = event.target;
     let errors = this.state.errors;
     switch (name) {
       case "first_name":
         errors.first_name = !value.match(
           /^(?=[a-zA-Z]{5,20}$)(?!.*[_.]{2})[^_.].*[^_.]$/
         )
-          ? "*first_name must be at least 5 characters long and without special character!"
+          ? "*firstname must be at least 5 characters long and without special character!"
           : "";
         break;
       case "last_name":
         errors.last_name = !value.match(
           /^(?=[a-zA-Z]{3,20}$)(?!.*[_.]{2})[^_.].*[^_.]$/
         )
-          ? "*last_name must be at least 3 characters long and without special character!"
+          ? "*lastname must be at least 3 characters long and without special character!"
           : "";
         break;
       case "email":
@@ -95,13 +100,13 @@ class SignUp extends React.Component {
       default:
         break;
     }
-    this.setState({ errors, [name]: value });
+    this.setState({errors, [name]: value});
   };
 
   //handle validation
   handleValidation = () => {
     let formIsValid = true;
-    const { first_name, last_name, email, password, confirmpassword, phone } =
+    const {first_name, last_name, email, password, confirmpassword, phone} =
       this.state.errors;
 
     let formerror =
@@ -113,7 +118,7 @@ class SignUp extends React.Component {
       phone === "";
 
     if (formerror) {
-      const { first_name, last_name, email, password, confirmpassword, phone } =
+      const {first_name, last_name, email, password, confirmpassword, phone} =
         this.state;
       if (
         first_name === "" ||
@@ -132,17 +137,17 @@ class SignUp extends React.Component {
 
   //if valid form redirect to product home(dashboard) page
   redirectLoginPage = () => {
-    const { history } = this.props;
+    const {history} = this.props;
     if (history) history.push("/loginpage");
   };
 
   //handle signup
   handleSignup = async (e) => {
-    const { first_name, last_name, email, password, phone } = this.state;
+    const {first_name, last_name, email, password, phone} = this.state;
     e.preventDefault();
 
     if (this.handleValidation(this.state.errors)) {
-      this.setState({ spin: true });
+      this.setState({spin: true});
       let result = await api.post("/api/users/sign_up", {
         user: {
           first_name,
@@ -152,7 +157,7 @@ class SignUp extends React.Component {
           phone,
           role: "patient",
         },
-        device_detail: { device_type: "web", player_id: "" },
+        device_detail: {device_type: "web", player_id: ""},
       });
       console.log("Sign up result", result);
       if (result.data.status === 200) {
@@ -164,14 +169,6 @@ class SignUp extends React.Component {
         localStorage.setItem("signup", JSON.stringify(this.state));
       }
     }
-    // console.log("state", this.state);
-    // if (this.handleValidation(this.state.errors)) {
-    //   const success = () => {
-    //     message.success("Sign up successfully");
-    //   };
-    //   success();
-    //   this.redirectLoginPage();
-    //   localStorage.setItem("signup", JSON.stringify(this.state));
     // }
     else if (!this.handleValidation(this.state.errors)) {
       const error = () => {
@@ -193,7 +190,7 @@ class SignUp extends React.Component {
     } = this.state;
     return (
       <Layout>
-        <Spin spinning={this.state.spin}>
+        <Spin spinning={this.state.spin} tip="Creating an account...">
           <Header
             style={{
               background: "white",
@@ -202,7 +199,7 @@ class SignUp extends React.Component {
               position: "fixed",
             }}
           >
-            <div style={{ float: "left" }}>
+            <div style={{float: "left"}}>
               <Tooltip title="Home" placement="bottom">
                 <Link to="/">
                   <Image
@@ -210,20 +207,16 @@ class SignUp extends React.Component {
                     width={"150px"}
                     style={{
                       padding: "10px",
-                      // filter: "drop-shadow(0 0 0.75rem crimson)",
                     }}
                     preview={false}
                   />
                 </Link>
               </Tooltip>
             </div>
-            <Menu style={{ float: "right" }} mode="horizontal" theme="light">
-              <Menu.Item key="1">
+            <Menu style={{float: "right"}} mode="horizontal" theme="light">
+              <Menu.Item key="1" icon={<LoginOutlined />}>
                 <Link to="/loginpage"> Login</Link>
               </Menu.Item>
-              {/* <Menu.Item key="2">
-              <Link to="/signuppage">New User? SignUp</Link>
-            </Menu.Item> */}
             </Menu>
           </Header>
           <Layout
@@ -235,36 +228,19 @@ class SignUp extends React.Component {
                 "progid:DXImageTransform.Microsoft.gradient( startColorstr=#E9B7CE, endColorstr=#D3F3F1, GradientType=1 )",
             }}
           >
-            <Sider
-              theme="light"
-              // width={400}
-              style={{
-                marginTop: "60px",
-                background:
-                  "-webkit-linear-gradient(90deg, hsla(332, 53%, 82%, 1) 0%, hsla(176, 57%, 89%, 1) 100%)",
-                filter:
-                  "progid:DXImageTransform.Microsoft.gradient( startColorstr=#E9B7CE, endColorstr=#D3F3F1, GradientType=1 )",
-              }}
-              breakpoint="lg"
-              collapsedw="0"
-            >
-              <Result
-                icon={<SmileOutlined />}
-                title="Great, You are few clicks away from Sign up! Fill the details."
-              />
-            </Sider>
             <Content
             // style={{ marginTop: "60px" }}
             >
               <div className="form-layout">
                 <Title>Register</Title>
-                <Form layout="vertical" style={{ width: "400px" }}>
+                <Form layout="vertical" style={{width: "400px"}}>
                   <Form.Item>
                     <Input
                       placeholder="First Name"
                       name="first_name"
                       value={first_name}
                       onChange={this.handleOnChange}
+                      prefix={<UserOutlined />}
                       required
                     />
                     <h5 className="errors">{errors["first_name"]}</h5>
@@ -277,6 +253,7 @@ class SignUp extends React.Component {
                       value={last_name}
                       onChange={this.handleOnChange}
                       required
+                      prefix={<UserOutlined />}
                     />
                     <h5 className="errors">{errors["last_name"]}</h5>
                   </Form.Item>
@@ -288,6 +265,7 @@ class SignUp extends React.Component {
                       value={email}
                       onChange={this.handleOnChange}
                       required
+                      prefix={<MailOutlined />}
                     />
                     <h5 className="errors">{errors["email"]}</h5>
                   </Form.Item>
@@ -298,6 +276,7 @@ class SignUp extends React.Component {
                       placeholder="Password"
                       value={password}
                       onChange={this.handleOnChange}
+                      prefix={<LockOutlined className="site-form-item-icon" />}
                       required
                     />
                     <h5 className="errors">{errors["password"]}</h5>
@@ -309,6 +288,7 @@ class SignUp extends React.Component {
                       placeholder="ConfirmPassword"
                       value={confirmpassword}
                       onChange={this.handleOnChange}
+                      prefix={<LockOutlined className="site-form-item-icon" />}
                       required
                     />
                     <h5 className="errors">{errors["confirmpassword"]}</h5>
@@ -322,6 +302,7 @@ class SignUp extends React.Component {
                       placeholder="+91 **********"
                       value={phone}
                       onChange={this.handleOnChange}
+                      prefix={<PhoneOutlined />}
                     />
                     <h5 className="errors">{errors["phone"]}</h5>
                   </Form.Item>
@@ -334,7 +315,7 @@ class SignUp extends React.Component {
                   </h5>
                   <Button
                     type="primary"
-                    style={{ width: "100%" }}
+                    style={{width: "100%"}}
                     onClick={this.handleSignup}
                     icon={<LoginOutlined />}
                   >

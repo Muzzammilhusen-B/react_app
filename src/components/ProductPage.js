@@ -42,6 +42,8 @@ class ProductPage extends React.Component {
     });
     console.log("logout result", result);
     if (result.data.status === 200) {
+      localStorage.removeItem("authToken");
+      localStorage.removeItem("user");
       const success = () => {
         message.success(`${result.data.message}`);
       };
@@ -70,6 +72,8 @@ class ProductPage extends React.Component {
   render() {
     const { items } = loadProductsfromLocal();
     const count = this.props.addedItems.length;
+    const user = JSON.parse(localStorage.getItem("user"));
+    // console.log("user", user.first_name);
     // console.log("products", items);
     // const stateItems = this.props.state.items;
 
@@ -123,51 +127,57 @@ class ProductPage extends React.Component {
     ];
     return (
       <Layout>
-        <Spin spinning={this.state.spin}>
-          <Header
-            style={{
-              background: "white",
-              zIndex: 1,
-              width: "100%",
-              position: "fixed",
-            }}
-          >
-            <div style={{ float: "left" }}>
-              <Tooltip title="Home" placement="bottom">
-                <Link to="/dashboardpage">
-                  <Image
-                    src={logo}
-                    width={"150px"}
-                    style={{
-                      padding: "10px",
-                      // filter: "drop-shadow(0 0 0.75rem crimson)",
-                    }}
-                    preview={false}
-                  />
-                </Link>
-              </Tooltip>
-            </div>
-            <Menu style={{ float: "right" }} mode="horizontal" theme="light">
-              <Menu.Item
-                key="0"
-                onClick={this.redirectToCart}
-                icon={<ShoppingCartOutlined />}
-                style={{ float: "right" }}
-              >
-                <Badge count={count} className="head-example">
-                  Cart{" "}
-                </Badge>
-              </Menu.Item>
+        <Header
+          style={{
+            background: "white",
+            zIndex: 1,
+            width: "100%",
+            position: "fixed",
+          }}
+        >
+          <div style={{ float: "left" }}>
+            <Tooltip title="Home" placement="bottom">
+              <Link to="/dashboardpage">
+                <Image
+                  src={logo}
+                  width={"150px"}
+                  style={{
+                    padding: "10px",
+                    // filter: "drop-shadow(0 0 0.75rem crimson)",
+                  }}
+                  preview={false}
+                />
+              </Link>
+            </Tooltip>
+          </div>
+          <div style={{ float: "right" }}>
+            <Badge
+              status="success"
+              text={<Link to="/dashboardpage">{user.first_name}</Link>}
+            />
+          </div>
+          <Menu style={{ float: "right" }} mode="horizontal" theme="light">
+            <Menu.Item
+              key="0"
+              onClick={this.redirectToCart}
+              icon={<ShoppingCartOutlined />}
+              style={{ float: "right" }}
+            >
+              <Badge count={count} className="head-example">
+                Cart{" "}
+              </Badge>
+            </Menu.Item>
 
-              <Menu.Item
-                key="1"
-                onClick={this.handleLogout}
-                icon={<LogoutOutlined />}
-              >
-                Log out
-              </Menu.Item>
-            </Menu>
-          </Header>
+            <Menu.Item
+              key="1"
+              onClick={this.handleLogout}
+              icon={<LogoutOutlined />}
+            >
+              Logout
+            </Menu.Item>
+          </Menu>
+        </Header>
+        <Spin spinning={this.state.spin} tip="Logging out...">
           <Content style={{ marginTop: "50px", height: "700px" }}>
             <div
               style={{

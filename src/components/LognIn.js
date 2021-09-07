@@ -14,22 +14,23 @@ import {
   Spin,
 } from "antd";
 import {
-  UserOutlined,
+  // UserOutlined,
+  MailOutlined,
   LockOutlined,
   LoginOutlined,
   UserAddOutlined,
 } from "@ant-design/icons";
 import logo from "./logo.png";
 import "./login.css";
-import { Link } from "react-router-dom";
+import {Link} from "react-router-dom";
 import Footerbar from "./Footer";
-import { saveProductsToLocal } from "../localstorage";
+import {saveProductsToLocal} from "../localstorage";
 // import axios from "axios";
 import api from "./apis/api";
 // import axios from "axios";
 
-const { Header, Content } = Layout;
-const { Title } = Typography;
+const {Header, Content} = Layout;
+const {Title} = Typography;
 class LogIn extends React.Component {
   state = {
     email: "",
@@ -43,25 +44,24 @@ class LogIn extends React.Component {
   };
 
   async componentDidMount() {
-    const { email, password, remember } = this.state;
+    const {email, password, remember} = this.state;
     this.setState({
       email: email,
       password: password,
       remember: remember,
     });
-    //    // console.log("signup details loginpage", signup);
   }
 
   //on change event
   handleOnChange = (event) => {
     // console.log("clicked", event.target);
-    const { name, value } = event.target;
+    const {name, value} = event.target;
     const checkbox = event.target.checked;
     // console.log("checkbox", checkbox);
     const isChecked = checkbox ? true : false;
 
     //switch statement for validation
-    let { errors } = this.state;
+    let {errors} = this.state;
     switch (name) {
       case "email":
         let lastAtPos = value.lastIndexOf("@");
@@ -78,22 +78,22 @@ class LogIn extends React.Component {
         break;
       case "password":
         errors.password = !value.match(
-          "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{6,1000}$"
+          "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,1000}$"
         )
-          ? "*Password should contain one smallcase, uppercase, symbol & number each and minimum 6 in length"
+          ? "*Password should contain one smallcase, uppercase, symbol & number each and minimum 8 in length"
           : "";
         break;
 
       default:
         break;
     }
-    this.setState({ errors, [name]: value, remember: isChecked });
+    this.setState({errors, [name]: value, remember: isChecked});
   };
   //handle validation
   handleValidation = () => {
     let formIsValid = true;
     if (this.state.errors.email === "" && this.state.errors.password === "") {
-      const { email, password } = this.state;
+      const {email, password} = this.state;
       if (email === "" || password === "") {
         return false;
       }
@@ -104,18 +104,19 @@ class LogIn extends React.Component {
   //handle login
   handleLogin = async (e) => {
     e.preventDefault();
-    const { remember, email, password } = this.state;
+    const {remember, email, password} = this.state;
     if (remember && this.handleValidation(this.state.errors)) {
-      this.setState({ spin: true });
+      this.setState({spin: true});
 
       let result = await api.post("/api/users/sign_in", {
-        user: { email, password },
+        user: {email, password},
         role: "patient",
-        device_detail: { device_type: "web", player_id: "" },
+        device_detail: {device_type: "web", player_id: ""},
       });
       console.log("Result", result.data.status);
 
       if (result.data.status === 200) {
+        localStorage.setItem("user", JSON.stringify(result.data.data.user));
         saveProductsToLocal();
         this.redirectLoginHome();
         const success = () => {
@@ -130,27 +131,27 @@ class LogIn extends React.Component {
           JSON.stringify(result.data.data.user.auth_token)
         );
       } else {
-        this.setState({ spin: false });
+        this.setState({spin: false});
         const error = () => {
           message.error(`${result.data.message}`);
         };
         error();
       }
     } else if (this.handleValidation(this.state.errors)) {
-      this.setState({ spin: true });
+      this.setState({spin: true});
       let result = await api.post("/api/users/sign_in", {
-        user: { email, password },
+        user: {email, password},
         role: "patient",
-        device_detail: { device_type: "web", player_id: "" },
+        device_detail: {device_type: "web", player_id: ""},
       });
       console.log("Result", result);
       if (result.data.status === 200) {
+        localStorage.setItem("user", JSON.stringify(result.data.data.user));
         saveProductsToLocal();
         this.redirectLoginHome();
+        const {user} = result.data.data;
         const success = () => {
-          message.success(
-            `Welcome ${result.data.data.user.first_name} ${result.data.data.user.last_name}`
-          );
+          message.success(`Welcome ${user.first_name} ${user.last_name}`);
         };
         success();
         localStorage.setItem(
@@ -158,7 +159,7 @@ class LogIn extends React.Component {
           JSON.stringify(result.data.data.user.auth_token)
         );
       } else {
-        this.setState({ spin: false });
+        this.setState({spin: false});
         const error = () => {
           message.error(`${result.data.message}`);
         };
@@ -168,12 +169,12 @@ class LogIn extends React.Component {
   };
   //redirect loginhome page(product list component dashboard)
   redirectLoginHome = () => {
-    const { history } = this.props;
+    const {history} = this.props;
     if (history) history.push("/dashboardpage");
   };
 
   render() {
-    const { username, password, errors } = this.state;
+    const {username, password, errors} = this.state;
     return (
       <Layout>
         <Header
@@ -184,7 +185,7 @@ class LogIn extends React.Component {
             position: "fixed",
           }}
         >
-          <div style={{ float: "left" }}>
+          <div style={{float: "left"}}>
             <Tooltip title="Home" placement="bottom">
               <Link to="/">
                 <Image
@@ -199,38 +200,38 @@ class LogIn extends React.Component {
               </Link>
             </Tooltip>
           </div>
-          <Menu style={{ float: "right" }} mode="horizontal" theme="light">
+          <Menu style={{float: "right"}} mode="horizontal" theme="light">
             {/* <Menu.Item key="1">
               <Link to="/loginpage"> SignIn</Link>
             </Menu.Item> */}
-            <Menu.Item key="2">
+            <Menu.Item key="2" icon={<UserAddOutlined />}>
               <Link to="/signuppage">New User? SignUp</Link>
             </Menu.Item>
           </Menu>
         </Header>
-        <Spin spinning={this.state.spin}>
+        <Spin spinning={this.state.spin} tip="Logging in account...">
           <Content className="layout">
             <div className="login-form">
               <Title>LogIn</Title>
-              <Form layout="vertical" style={{ width: "400px" }}>
+              <Form layout="vertical" style={{width: "400px"}}>
                 <Form.Item
                   label="Email"
                   // name="username"
-                  rules={[{ required: true }]}
+                  rules={[{required: true}]}
                 >
                   <Input
-                    prefix={<UserOutlined className="site-form-item-icon" />}
+                    prefix={<MailOutlined className="site-form-item-icon" />}
                     value={username}
                     onChange={this.handleOnChange}
                     name="email"
                     placeholder="Email"
                   />
-                  <h4 style={{ color: "red" }}>{errors["email"]}</h4>
+                  <h4 style={{color: "red"}}>{errors["email"]}</h4>
                 </Form.Item>
                 <Form.Item
                   label="Password"
                   // name="password"
-                  rules={[{ required: true }]}
+                  rules={[{required: true}]}
                 >
                   <Input.Password
                     prefix={<LockOutlined className="site-form-item-icon" />}
@@ -239,7 +240,7 @@ class LogIn extends React.Component {
                     name="password"
                     placeholder="Password"
                   />
-                  <h4 style={{ color: "red" }}>{errors["password"]}</h4>
+                  <h4 style={{color: "red"}}>{errors["password"]}</h4>
                 </Form.Item>
 
                 <Checkbox onChange={this.handleOnChange} name="remember">
@@ -249,7 +250,7 @@ class LogIn extends React.Component {
                 <Form.Item name="login">
                   <Button
                     type="primary"
-                    style={{ width: "100%", marginTop: "5px" }}
+                    style={{width: "100%", marginTop: "5px"}}
                     icon={<LoginOutlined />}
                     onClick={this.handleLogin}
                   >

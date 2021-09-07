@@ -1,17 +1,18 @@
 import React from "react";
-import { Layout, Card, Carousel, Tooltip, Image, Menu } from "antd";
+import { Layout, Tooltip, Image, Menu, Typography } from "antd";
 import { Link } from "react-router-dom";
 import "antd/dist/antd.css";
 import logo from "./logo.png";
-import product1 from "./product1.jpg";
-import product2 from "./product2.jpg";
-import product3 from "./product3.jpg";
+// import product1 from "./product1.jpg";
+// import product2 from "./product2.jpg";
+// import product3 from "./product3.jpg";
 import Footerbar from "./Footer";
 
+const { Title } = Typography;
 const { Header, Content } = Layout;
 const MainPage = () => {
   return (
-    <Layout style={{ height: "800px" }}>
+    <Layout>
       <Header
         style={{
           background: "white",
@@ -45,9 +46,30 @@ const MainPage = () => {
         </Menu>
       </Header>
 
-      <Content style={{ marginTop: "50px" }}>
+      <Content
+        style={{
+          marginTop: "50px",
+          background: "white",
+          display: "flex",
+          height: "700px",
+          alignItems: "center",
+          justifyContent: "center",
+          flexDirection: "column",
+        }}
+      >
+        <Title
+          style={{
+            color: "blue",
+          }}
+        >
+          Welcome to AppLocum
+        </Title>
+        <Link to="/loginpage">
+          <p>Click here to Login</p>
+        </Link>
+
         {/* <div> */}
-        <Carousel autoplay>
+        {/* <Carousel autoplay>
           <Card
             style={{ height: "700px" }}
             cover={
@@ -56,16 +78,16 @@ const MainPage = () => {
                 style={{ height: "700px", width: "100%" }}
               />
             }
-          />
-          <Card
+          /> */}
+        {/* <Card
             cover={
               <Image
                 src={product2}
                 style={{ height: "700px", width: "100%" }}
               />
             }
-          />
-          <Card
+          /> */}
+        {/* <Card 
             cover={
               <Image
                 src={product3}
@@ -73,7 +95,7 @@ const MainPage = () => {
               />
             }
           />
-        </Carousel>
+        </Carousel> */}
         {/* </div> */}
       </Content>
       <Footerbar />

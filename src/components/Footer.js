@@ -13,8 +13,8 @@ const Footerbar = () => {
           // alignContent: "end"
           clear: "both",
           // marginTop: "20px",
-          position: "relative",
-          // bottom: "0",
+          position: "fixed",
+          bottom: "0",
           width: "100%",
           height: "20px",
           justifyContent: "center",
@@ -23,7 +23,7 @@ const Footerbar = () => {
         <Space>
           {/* <HeartFilled /> */}
           <ShoppingTwoTone style={{ fontSize: "20px" }} />
-          Shop Cart App ©2021.
+          React practicle App ©2021.
         </Space>
       </Footer>
     </Layout>

@@ -9,6 +9,7 @@ import {
   Card,
   Button,
   message,
+  Spin,
 } from "antd";
 import {
   ShoppingCartOutlined,
@@ -26,6 +27,7 @@ import api from "./apis/api";
 const { Header, Content } = Layout;
 const { Meta } = Card;
 class Cart extends React.Component {
+  state = { spin: false };
   async componentDidMount() {
     const result = await api.get("/api/users/sign_in");
     console.log("user", result);
@@ -48,6 +50,8 @@ class Cart extends React.Component {
     });
     console.log("logout result", result);
     if (result.data.status === 200) {
+      localStorage.removeItem("authToken");
+      localStorage.removeItem("user");
       const success = () => {
         message.success(`${result.data.message}`);
       };
@@ -81,6 +85,7 @@ class Cart extends React.Component {
     const addedItems = this.props.addedItems;
     const total = this.props.total;
     console.log("total", total);
+    const user = JSON.parse(localStorage.getItem("user"));
     return (
       <Layout>
         <Header
@@ -106,84 +111,94 @@ class Cart extends React.Component {
               </Link>
             </Tooltip>
           </div>
-          <Menu style={{ float: "right" }} mode="horizontal" theme="light">
-            <Menu.Item
-              key="1"
-              onClick={this.redirectToDashboard}
-              icon={<DashboardOutlined />}
-            >
-              Dashboard
-            </Menu.Item>
-            <Menu.Item
-              key="2"
-              icon={<ShoppingCartOutlined />}
-              style={{ float: "right" }}
-            >
-              <Badge count={count} className="head-example">
-                Cart{" "}
-              </Badge>
-            </Menu.Item>
-            <Menu.Item
-              key="3"
-              onClick={this.handleLogout}
-              icon={<LogoutOutlined />}
-            >
-              Log out
-            </Menu.Item>
-          </Menu>
-        </Header>
-        <Content style={{ marginTop: "50px", height: "700px" }}>
-          <div
-            style={{ float: "right", padding: "20px", fontSize: "20px" }}
-          >{`Total: ${total} $`}</div>
-          <div
-            style={{
-              padding: "20px",
-              display: "flex",
-              flexWrap: "wrap",
-              flexDirection: "row",
-              justifyContent: "center",
-              alignContent: "space-around",
-            }}
-          >
-            {addedItems.map((item) => {
-              console.log("card item", item);
-              return (
-                <Card
-                  hoverable
-                  style={{ width: 270, alignItems: "center" }}
-                  title={item.Name}
-                  key={item.id}
-                >
-                  <Meta
-                    title={`Location: ${item.Location}`}
-                    description={`Price: ${item.price} $`}
-                  />
-                  <Button
-                    disabled={item.quantity === item.qty ? true : ""}
-                    type="link"
-                    onClick={() => this.handleAddQty(item.id)}
-                    icon={<CaretUpOutlined style={{ fontSize: "20px" }} />}
-                  />
-                  {item.quantity}{" "}
-                  <Button
-                    type="link"
-                    onClick={() => this.handleSubQty(item.id)}
-                    icon={<CaretDownOutlined style={{ fontSize: "20px" }} />}
-                  />
-                  <div>
-                    <Button
-                      type="primary"
-                      onClick={() => this.hanldeRemove(item.id)}
-                    >
-                      Remove
-                    </Button>
-                  </div>
-                </Card>
-              );
-            })}
+          <div style={{ float: "right" }}>
+            <Badge
+              status="success"
+              text={<Link to="/dashboardpage">{user.first_name}</Link>}
+            />
           </div>
-        </Content>
+          <div style={{ float: "right" }}>
+            <Menu mode="horizontal" theme="light">
+              <Menu.Item
+                key="1"
+                onClick={this.redirectToDashboard}
+                icon={<DashboardOutlined />}
+              >
+                Dashboard
+              </Menu.Item>
+              <Menu.Item
+                key="2"
+                icon={<ShoppingCartOutlined />}
+                style={{ float: "right" }}
+              >
+                <Badge count={count} className="head-example">
+                  Cart{" "}
+                </Badge>
+              </Menu.Item>
+              <Menu.Item
+                key="3"
+                onClick={this.handleLogout}
+                icon={<LogoutOutlined />}
+              >
+                Log out
+              </Menu.Item>
+            </Menu>
+          </div>
+        </Header>
+        <Spin spinning={this.state.spin} tip="Logging out...">
+          <Content style={{ marginTop: "50px", height: "700px" }}>
+            <div
+              style={{ float: "right", padding: "20px", fontSize: "20px" }}
+            >{`Total: ${total} $`}</div>
+            <div
+              style={{
+                padding: "20px",
+                display: "flex",
+                flexWrap: "wrap",
+                flexDirection: "row",
+                justifyContent: "center",
+                alignContent: "space-around",
+              }}
+            >
+              {addedItems.map((item) => {
+                console.log("card item", item);
+                return (
+                  <Card
+                    hoverable
+                    style={{ width: 270, alignItems: "center" }}
+                    title={item.Name}
+                    key={item.id}
+                  >
+                    <Meta
+                      title={`Location: ${item.Location}`}
+                      description={`Price: ${item.price} $`}
+                    />
+                    <Button
+                      disabled={item.quantity === item.qty ? true : ""}
+                      type="link"
+                      onClick={() => this.handleAddQty(item.id)}
+                      icon={<CaretUpOutlined style={{ fontSize: "20px" }} />}
+                    />
+                    {item.quantity}{" "}
+                    <Button
+                      type="link"
+                      onClick={() => this.handleSubQty(item.id)}
+                      icon={<CaretDownOutlined style={{ fontSize: "20px" }} />}
+                    />
+                    <div>
+                      <Button
+                        type="primary"
+                        onClick={() => this.hanldeRemove(item.id)}
+                      >
+                        Remove
+                      </Button>
+                    </div>
+                  </Card>
+                );
+              })}
+            </div>
+          </Content>
+        </Spin>
         <Footerbar />
       </Layout>
     );
